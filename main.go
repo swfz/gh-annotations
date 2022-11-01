@@ -6,13 +6,21 @@ import (
 	"github.com/cli/go-gh"
 	"github.com/cli/go-gh/pkg/api"
 	"github.com/cli/go-gh/pkg/repository"
+	"log"
 	"strconv"
 )
 
 type Run struct {
-	WorkflowId int    `json:"workflow_id"`
-	JobsUrl    string `json:"jobs_url"`
-	Id         int    `json:"id"`
+	WorkflowId   int    `json:"workflow_id"`
+	JobsUrl      string `json:"jobs_url"`
+	Id           int    `json:"id"`
+	Event        string `json:"event"`
+	DisplayTitle string `json:"display_title"`
+	HeadBranch   string `json:"head_branch"`
+	HtmlUrl      string `json:"html_url"`
+	Name         string `json:"name"`
+	Path         string `json:"path"`
+	Status       string `json:"status"`
 }
 
 type WorkflowRuns struct {
@@ -22,6 +30,7 @@ type WorkflowRuns struct {
 
 type Job struct {
 	Id          int    `json:"id"`
+	Name        string `json:"name"`
 	CheckRunUrl string `json:"check_run_url"`
 	Conclusion  string `json:"conclusion"`
 	Status      string `json:"status"`
@@ -33,7 +42,7 @@ type WorkflowJobs struct {
 	Jobs       []Job `json:"jobs"`
 }
 
-type Annotations []struct {
+type Annotation struct {
 	Path            string `json:"path"`
 	BlobHref        string `json:"blob_href"`
 	Title           string `json:"title"`
@@ -44,6 +53,18 @@ type Annotations []struct {
 	StartColumn     int    `json:"start_column"`
 	EndLine         int    `json:"end_line"`
 	EndColumn       int    `json:"end_column"`
+}
+
+type Record struct {
+	Repository      string `json:"repository"`
+	WorkflowName    string `json:"workflow_name"`
+	WorkflowEvent   string `json:"workflow_event"`
+	WorkflowPath    string `json:"workflow_path"`
+	WorkflowUrl     string `json:"workflow_url"`
+	JobName         string `json:"job_name"`
+	JobConclusion   string `json:"job_conclusion"`
+	AnnotationLevel string `json:"annotation_level"`
+	Message         string `json:"message"`
 }
 
 func latest(workflowRuns WorkflowRuns) []Run {
@@ -94,18 +115,34 @@ func getJobs(client api.RESTClient, repository repository.Repository, run Run) W
 	return jobs
 }
 
-func getAnnotations(client api.RESTClient, repository repository.Repository, job Job) Annotations {
+func getAnnotations(client api.RESTClient, repository repository.Repository, job Job) []Annotation {
 	var res []interface{}
 	path := "repos/" + repository.Owner() + "/" + repository.Name() + "/check-runs/" + strconv.Itoa(job.Id) + "/annotations"
 	client.Get(path, &res)
 
 	jsonStr, _ := json.Marshal(res)
-	var annotations Annotations
+	var annotations []Annotation
 	if err := json.Unmarshal([]byte(jsonStr), &annotations); err != nil {
 		panic(err)
 	}
 
 	return annotations
+}
+
+func toRecord(repository repository.Repository, run Run, job Job, annotation Annotation) Record {
+	r := Record{
+		Repository:      repository.Owner() + "/" + repository.Name(),
+		WorkflowName:    run.Name,
+		WorkflowEvent:   run.Event,
+		WorkflowPath:    run.Path,
+		WorkflowUrl:     run.HtmlUrl,
+		JobName:         job.Name,
+		JobConclusion:   job.Conclusion,
+		AnnotationLevel: annotation.AnnotationLevel,
+		Message:         annotation.Message,
+	}
+
+	return r
 }
 
 func main() {
@@ -116,19 +153,31 @@ func main() {
 	}
 	currentRepository, _ := gh.CurrentRepository()
 
-	//fmt.Printf("%+v\n", workflowRunsRes)
-
 	workflowRuns := getRuns(client, currentRepository)
 	latestRuns := latest(workflowRuns)
-	fmt.Printf("%+v\n", latestRuns)
 
+	var summary []Record
+
+	//fmt.Printf("Repository: %s/%s\n", currentRepository.Owner(), currentRepository.Name())
 	for _, run := range latestRuns {
-		jobs := getJobs(client, currentRepository, run)
+		//fmt.Printf("Workflow(%s): %s(%s)\n", run.Event, run.Name, run.Path)
 
+		jobs := getJobs(client, currentRepository, run)
 		for _, job := range jobs.Jobs {
+			//fmt.Printf("\tJob name: %s, %s\n", job.Name, job.Conclusion)
 			annotations := getAnnotations(client, currentRepository, job)
-			fmt.Print("\n===========================================\n")
-			fmt.Printf("%+v\n", annotations)
+			for _, annotation := range annotations {
+				//fmt.Printf("\t\t%s: %s\n", annotation.AnnotationLevel, annotation.Message)
+				r := toRecord(currentRepository, run, job, annotation)
+				summary = append(summary, r)
+			}
 		}
 	}
+
+	j, err := json.Marshal(summary)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%s", string(j))
 }
