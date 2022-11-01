@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cli/go-gh"
+	"github.com/cli/go-gh/pkg/api"
+	"github.com/cli/go-gh/pkg/repository"
 	"strconv"
 )
 
@@ -14,8 +16,8 @@ type Run struct {
 }
 
 type WorkflowRuns struct {
-	TotalCount   int   `json:"total_count"`
-	WorkflowRuns []Run `json:"workflow_runs"`
+	TotalCount int   `json:"total_count"`
+	Runs       []Run `json:"workflow_runs"`
 }
 
 type Job struct {
@@ -46,8 +48,7 @@ type Annotations []struct {
 
 func latest(workflowRuns WorkflowRuns) []Run {
 	var latestRuns []Run
-	for _, run := range workflowRuns.WorkflowRuns {
-
+	for _, run := range workflowRuns.Runs {
 		var existRun bool = false
 
 		for _, latest := range latestRuns {
@@ -64,29 +65,10 @@ func latest(workflowRuns WorkflowRuns) []Run {
 	return latestRuns
 }
 
-func main() {
-	fmt.Println("hi world, this is the gh-annotations extension!")
-
-	client, err := gh.RESTClient(nil)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	response := struct{ Login string }{}
-	err = client.Get("user", &response)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Printf("running as %s\n", response.Login)
-
-	currentRepository, _ := gh.CurrentRepository()
-	fmt.Printf("%+v", currentRepository)
-
-	// run api request
+func getRuns(client api.RESTClient, repository repository.Repository) WorkflowRuns {
 	var res map[string]interface{}
-	apiPath := "repos/" + currentRepository.Owner() + "/" + currentRepository.Name() + "/actions/runs"
-	client.Get(apiPath, &res)
+	path := "repos/" + repository.Owner() + "/" + repository.Name() + "/actions/runs"
+	client.Get(path, &res)
 	//fmt.Printf("%+v", res)
 
 	jsonStr, _ := json.Marshal(res)
@@ -95,34 +77,57 @@ func main() {
 		panic(err)
 	}
 
+	return workflowRunsRes
+}
+
+func getJobs(client api.RESTClient, repository repository.Repository, run Run) WorkflowJobs {
+	var res map[string]interface{}
+	path := "repos/" + repository.Owner() + "/" + repository.Name() + "/actions/runs/" + strconv.Itoa(run.Id) + "/jobs"
+	client.Get(path, &res)
+
+	jsonStr, _ := json.Marshal(res)
+	var jobs WorkflowJobs
+	if err := json.Unmarshal([]byte(jsonStr), &jobs); err != nil {
+		panic(err)
+	}
+
+	return jobs
+}
+
+func getAnnotations(client api.RESTClient, repository repository.Repository, job Job) Annotations {
+	var res []interface{}
+	path := "repos/" + repository.Owner() + "/" + repository.Name() + "/check-runs/" + strconv.Itoa(job.Id) + "/annotations"
+	client.Get(path, &res)
+
+	jsonStr, _ := json.Marshal(res)
+	var annotations Annotations
+	if err := json.Unmarshal([]byte(jsonStr), &annotations); err != nil {
+		panic(err)
+	}
+
+	return annotations
+}
+
+func main() {
+	client, err := gh.RESTClient(nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	currentRepository, _ := gh.CurrentRepository()
+
 	//fmt.Printf("%+v\n", workflowRunsRes)
 
-	latestRuns := latest(workflowRunsRes)
+	workflowRuns := getRuns(client, currentRepository)
+	latestRuns := latest(workflowRuns)
 	fmt.Printf("%+v\n", latestRuns)
 
 	for _, run := range latestRuns {
-		var jobsRes map[string]interface{}
-		jobsPath := "repos/" + currentRepository.Owner() + "/" + currentRepository.Name() + "/actions/runs/" + strconv.Itoa(run.Id) + "/jobs"
-		client.Get(jobsPath, &jobsRes)
-
-		jobsJsonStr, _ := json.Marshal(jobsRes)
-		var jobs WorkflowJobs
-		if err := json.Unmarshal([]byte(jobsJsonStr), &jobs); err != nil {
-			panic(err)
-		}
+		jobs := getJobs(client, currentRepository, run)
 
 		for _, job := range jobs.Jobs {
-			var annotationRes []interface{}
-			annotationPath := "repos/" + currentRepository.Owner() + "/" + currentRepository.Name() + "/check-runs/" + strconv.Itoa(job.Id) + "/annotations"
-			fmt.Printf("%+v\n", annotationPath)
-			fmt.Printf("%+v\n", job.CheckRunUrl)
-			client.Get(annotationPath, &annotationRes)
-
-			annotationJsonStr, _ := json.Marshal(annotationRes)
-			var annotations Annotations
-			if err := json.Unmarshal([]byte(annotationJsonStr), &annotations); err != nil {
-				panic(err)
-			}
+			annotations := getAnnotations(client, currentRepository, job)
+			fmt.Print("\n===========================================\n")
 			fmt.Printf("%+v\n", annotations)
 		}
 	}
