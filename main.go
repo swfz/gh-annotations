@@ -194,5 +194,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%s", string(j))
+	fmt.Printf("%s\n", string(j))
 }
