@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/cli/go-gh"
 	"github.com/cli/go-gh/pkg/api"
-	"github.com/cli/go-gh/pkg/repository"
 	"log"
 	"strconv"
 )
@@ -86,9 +86,9 @@ func latest(workflowRuns WorkflowRuns) []Run {
 	return latestRuns
 }
 
-func getRuns(client api.RESTClient, repository repository.Repository) WorkflowRuns {
+func getRuns(client api.RESTClient, repository string) WorkflowRuns {
 	var res map[string]interface{}
-	path := "repos/" + repository.Owner() + "/" + repository.Name() + "/actions/runs"
+	path := "repos/" + repository + "/actions/runs"
 	client.Get(path, &res)
 	//fmt.Printf("%+v", res)
 
@@ -101,9 +101,9 @@ func getRuns(client api.RESTClient, repository repository.Repository) WorkflowRu
 	return workflowRunsRes
 }
 
-func getJobs(client api.RESTClient, repository repository.Repository, run Run) WorkflowJobs {
+func getJobs(client api.RESTClient, repository string, run Run) WorkflowJobs {
 	var res map[string]interface{}
-	path := "repos/" + repository.Owner() + "/" + repository.Name() + "/actions/runs/" + strconv.Itoa(run.Id) + "/jobs"
+	path := "repos/" + repository + "/actions/runs/" + strconv.Itoa(run.Id) + "/jobs"
 	client.Get(path, &res)
 
 	jsonStr, _ := json.Marshal(res)
@@ -115,9 +115,9 @@ func getJobs(client api.RESTClient, repository repository.Repository, run Run) W
 	return jobs
 }
 
-func getAnnotations(client api.RESTClient, repository repository.Repository, job Job) []Annotation {
+func getAnnotations(client api.RESTClient, repository string, job Job) []Annotation {
 	var res []interface{}
-	path := "repos/" + repository.Owner() + "/" + repository.Name() + "/check-runs/" + strconv.Itoa(job.Id) + "/annotations"
+	path := "repos/" + repository + "/check-runs/" + strconv.Itoa(job.Id) + "/annotations"
 	client.Get(path, &res)
 
 	jsonStr, _ := json.Marshal(res)
@@ -129,9 +129,9 @@ func getAnnotations(client api.RESTClient, repository repository.Repository, job
 	return annotations
 }
 
-func toRecord(repository repository.Repository, run Run, job Job, annotation Annotation) Record {
+func toRecord(repository string, run Run, job Job, annotation Annotation) Record {
 	r := Record{
-		Repository:      repository.Owner() + "/" + repository.Name(),
+		Repository:      repository,
 		WorkflowName:    run.Name,
 		WorkflowEvent:   run.Event,
 		WorkflowPath:    run.Path,
@@ -146,14 +146,29 @@ func toRecord(repository repository.Repository, run Run, job Job, annotation Ann
 }
 
 func main() {
+	var options struct {
+		repo string
+	}
+
+	flag.StringVar(&options.repo, "repo", "", "Repository Name eg) owner/repo")
+	flag.Parse()
+
 	client, err := gh.RESTClient(nil)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	currentRepository, _ := gh.CurrentRepository()
 
-	workflowRuns := getRuns(client, currentRepository)
+	var repositoryPath string
+
+	if options.repo != "" {
+		repositoryPath = options.repo
+	} else {
+		currentRepository, _ := gh.CurrentRepository()
+		repositoryPath = currentRepository.Owner() + "/" + currentRepository.Name()
+	}
+
+	workflowRuns := getRuns(client, repositoryPath)
 	latestRuns := latest(workflowRuns)
 
 	var summary []Record
@@ -162,13 +177,13 @@ func main() {
 	for _, run := range latestRuns {
 		//fmt.Printf("Workflow(%s): %s(%s)\n", run.Event, run.Name, run.Path)
 
-		jobs := getJobs(client, currentRepository, run)
+		jobs := getJobs(client, repositoryPath, run)
 		for _, job := range jobs.Jobs {
 			//fmt.Printf("\tJob name: %s, %s\n", job.Name, job.Conclusion)
-			annotations := getAnnotations(client, currentRepository, job)
+			annotations := getAnnotations(client, repositoryPath, job)
 			for _, annotation := range annotations {
 				//fmt.Printf("\t\t%s: %s\n", annotation.AnnotationLevel, annotation.Message)
-				r := toRecord(currentRepository, run, job, annotation)
+				r := toRecord(repositoryPath, run, job, annotation)
 				summary = append(summary, r)
 			}
 		}
