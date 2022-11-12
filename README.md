@@ -8,6 +8,15 @@ Extension to output the list of annotations from the recently executed Workflow 
 gh annotations
 ```
 
+
+### Optional Args
+
+```shell
+$ gh annotations --help
+  -repo string
+        Repository Name eg) owner/repo
+```
+
 ### Example
 
 ```shell
