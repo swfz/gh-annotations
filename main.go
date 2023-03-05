@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/cli/go-gh"
 	"github.com/cli/go-gh/pkg/api"
+	"github.com/cli/go-gh/pkg/tableprinter"
+	"github.com/cli/go-gh/pkg/term"
 	"log"
 	"strconv"
 )
@@ -148,9 +150,11 @@ func toRecord(repository string, run Run, job Job, annotation Annotation) Record
 func main() {
 	var options struct {
 		repo string
+		json bool
 	}
 
 	flag.StringVar(&options.repo, "repo", "", "Repository Name eg) owner/repo")
+	flag.BoolVar(&options.json, "json", false, "Output JSON")
 	flag.Parse()
 
 	client, err := gh.RESTClient(nil)
@@ -194,5 +198,37 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%s\n", string(j))
+	if options.json {
+		fmt.Printf("%s\n", string(j))
+	} else {
+		terminal := term.FromEnv()
+		termWidth, _, _ := terminal.Size()
+		tp := tableprinter.New(terminal.Out(), terminal.IsTerminalOutput(), termWidth)
+
+		tp.AddField("Repository")
+		tp.AddField("WorkflowName")
+		tp.AddField("WorkflowEvent")
+		tp.AddField("WorkflowPath")
+		tp.AddField("WorkflowUrl")
+		tp.AddField("JobName")
+		tp.AddField("JobConclusion")
+		tp.AddField("AnnotationLevel")
+		tp.AddField("Message")
+		tp.EndRow()
+
+		for _, row := range summary {
+			tp.AddField(row.Repository)
+			tp.AddField(row.WorkflowName)
+			tp.AddField(row.WorkflowEvent)
+			tp.AddField(row.WorkflowPath)
+			tp.AddField(row.WorkflowUrl)
+			tp.AddField(row.JobName)
+			tp.AddField(row.JobConclusion)
+			tp.AddField(row.AnnotationLevel)
+			tp.AddField(row.Message)
+			tp.EndRow()
+		}
+
+		tp.Render()
+	}
 }
