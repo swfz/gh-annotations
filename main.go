@@ -23,6 +23,9 @@ type Run struct {
 	Name         string `json:"name"`
 	Path         string `json:"path"`
 	Status       string `json:"status"`
+	StartedAt    string `json:"run_started_at"`
+	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
 }
 
 type WorkflowRuns struct {
@@ -35,6 +38,8 @@ type Job struct {
 	Name        string `json:"name"`
 	CheckRunUrl string `json:"check_run_url"`
 	Conclusion  string `json:"conclusion"`
+	StartedAt   string `json:"started_at"`
+	CompletedAt string `json:"completed_at"`
 	Status      string `json:"status"`
 	HtmlUrl     string `json:"html_url"`
 }
@@ -63,8 +68,13 @@ type Record struct {
 	WorkflowEvent   string `json:"workflow_event"`
 	WorkflowPath    string `json:"workflow_path"`
 	WorkflowUrl     string `json:"workflow_url"`
+	WorkflowStarted string `json:"workflow_run_started_at"`
+	WorkflowCreated string `json:"workflow_created_at"`
+	WorkflowUpdated string `json:"workflow_updated_at"`
 	JobName         string `json:"job_name"`
 	JobConclusion   string `json:"job_conclusion"`
+	JobStarted      string `json:"job_started_at"`
+	JobCompleted    string `json:"job_completed_at"`
 	AnnotationLevel string `json:"annotation_level"`
 	Message         string `json:"message"`
 }
@@ -138,7 +148,12 @@ func toRecord(repository string, run Run, job Job, annotation Annotation) Record
 		WorkflowEvent:   run.Event,
 		WorkflowPath:    run.Path,
 		WorkflowUrl:     run.HtmlUrl,
+		WorkflowStarted: run.StartedAt,
+		WorkflowCreated: run.CreatedAt,
+		WorkflowUpdated: run.UpdatedAt,
 		JobName:         job.Name,
+		JobStarted:      job.StartedAt,
+		JobCompleted:    job.CompletedAt,
 		JobConclusion:   job.Conclusion,
 		AnnotationLevel: annotation.AnnotationLevel,
 		Message:         annotation.Message,
@@ -206,12 +221,12 @@ func main() {
 		tp := tableprinter.New(terminal.Out(), terminal.IsTerminalOutput(), termWidth)
 
 		tp.AddField("Repository")
-		tp.AddField("WorkflowName")
-		tp.AddField("WorkflowEvent")
-		tp.AddField("WorkflowPath")
-		tp.AddField("WorkflowUrl")
-		tp.AddField("JobName")
-		tp.AddField("JobConclusion")
+		tp.AddField("Workflow")
+		tp.AddField("Event")
+		tp.AddField("Job")
+		tp.AddField("JobStartedAt")
+		tp.AddField("JobCompletedAt")
+		tp.AddField("Conclusion")
 		tp.AddField("AnnotationLevel")
 		tp.AddField("Message")
 		tp.EndRow()
@@ -220,9 +235,9 @@ func main() {
 			tp.AddField(row.Repository)
 			tp.AddField(row.WorkflowName)
 			tp.AddField(row.WorkflowEvent)
-			tp.AddField(row.WorkflowPath)
-			tp.AddField(row.WorkflowUrl)
 			tp.AddField(row.JobName)
+			tp.AddField(row.JobStarted)
+			tp.AddField(row.JobCompleted)
 			tp.AddField(row.JobConclusion)
 			tp.AddField(row.AnnotationLevel)
 			tp.AddField(row.Message)
