@@ -11,7 +11,6 @@ import (
 	"github.com/cli/go-gh/pkg/term"
 	"io"
 	"log"
-	"net/http"
 	"strconv"
 )
 
@@ -119,8 +118,6 @@ func fetchWorkflowRuns(client api.RESTClient, repository string) (WorkflowRuns, 
 		return WorkflowRuns{}, err
 	}
 
-	//fmt.Printf("%#v\n", workflowRunsRes)
-
 	return workflowRunsRes, nil
 }
 
@@ -140,8 +137,6 @@ func fetchJobs(client api.RESTClient, repository string, run Run) (WorkflowJobs,
 	if err != nil {
 		return WorkflowJobs{}, err
 	}
-
-	fmt.Printf("%#v\n", jobs)
 
 	return jobs, nil
 }
@@ -192,7 +187,6 @@ func toRecord(repository string, run Run, job Job, annotation Annotation) Record
 
 type Options struct {
 	IO          *iostreams.IOStreams
-	HttpClient  func() (*http.Client, error)
 	HttpOptions api.ClientOptions
 	repo        string
 	json        bool
@@ -246,11 +240,10 @@ func run(options Options) {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
 		fmt.Println(string(summaryJson))
 	} else {
-
 		terminal := term.FromEnv()
 		termWidth, _, _ := terminal.Size()
-		var out io.Writer
 
+		var out io.Writer
 		if options.IO != nil {
 			out = options.IO.Out
 		} else {

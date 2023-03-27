@@ -5,26 +5,10 @@ import (
 	"github.com/cli/cli/v2/pkg/iostreams"
 	"github.com/cli/go-gh/pkg/api"
 	"github.com/stretchr/testify/assert"
-	"net/http"
 	"testing"
 )
 
-type Workflow struct {
-	Id   int
-	Name string
-}
-type ListOptions struct {
-	IO         *iostreams.IOStreams
-	HttpClient func() (*http.Client, error)
-	//BaseRepo   func() (ghrepo.Interface, error)
-
-	PlainOutput bool
-
-	All   bool
-	Limit int
-}
-
-func TestHoge(t *testing.T) {
+func Test_run(t *testing.T) {
 	workflowRuns := []Run{
 		{
 			WorkflowId:   1,
@@ -98,15 +82,13 @@ func TestHoge(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		fuga       string
 		options    Options
 		stubs      func(*httpmock.Registry)
 		wantOut    string
 		wantErrOut string
 	}{
 		{
-			name:    "hoge",
-			fuga:    "fuga",
+			name:    "Standard Output",
 			options: Options{},
 			wantOut: "Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  AnnotationLevel  Message",
 		},
