@@ -3,6 +3,7 @@ module github.com/swfz/gh-annotations
 go 1.18
 
 require (
+	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/cli/cli/v2 v2.23.0
 	github.com/cli/go-gh v1.0.0
 	github.com/stretchr/testify v1.7.5
