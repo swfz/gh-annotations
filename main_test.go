@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/MakeNowJust/heredoc"
 	"github.com/cli/cli/v2/pkg/httpmock"
 	"github.com/cli/cli/v2/pkg/iostreams"
 	"github.com/cli/go-gh/pkg/api"
@@ -9,44 +10,6 @@ import (
 )
 
 func Test_run(t *testing.T) {
-	workflowRuns := []Run{
-		{
-			WorkflowId:   1,
-			JobsUrl:      "https://example.com/jobs/1",
-			Id:           1001,
-			Event:        "push",
-			DisplayTitle: "Sample Run",
-			HeadBranch:   "main",
-			HtmlUrl:      "https://example.com/runs/1001",
-			Name:         "Run 1001",
-			Path:         "/path/to/run",
-			Status:       "completed",
-			StartedAt:    "2023-03-20T10:00:00Z",
-			CreatedAt:    "2023-03-20T09:50:00Z",
-			UpdatedAt:    "2023-03-20T10:05:00Z",
-		},
-		//{
-		//	WorkflowId:   2,
-		//	JobsUrl:      "https://example.com/jobs/1",
-		//	Id:           1002,
-		//	Event:        "push",
-		//	DisplayTitle: "Sample Run2",
-		//	HeadBranch:   "main",
-		//	HtmlUrl:      "https://example.com/runs/1001",
-		//	Name:         "Run 1002",
-		//	Path:         "/path/to/run",
-		//	Status:       "completed",
-		//	StartedAt:    "2023-03-20T10:00:00Z",
-		//	CreatedAt:    "2023-03-20T09:50:00Z",
-		//	UpdatedAt:    "2023-03-20T10:05:00Z",
-		//},
-	}
-
-	workflowRunPayload := WorkflowRuns{
-		TotalCount: 1,
-		Runs:       workflowRuns,
-	}
-
 	workflowJobs := []Job{
 		{
 			Id:          2001,
@@ -90,7 +53,10 @@ func Test_run(t *testing.T) {
 		{
 			name:    "Standard Output",
 			options: Options{},
-			wantOut: "Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  AnnotationLevel  Message",
+			wantOut: heredoc.Doc(`
+Repository           Workflow  Event  Job         JobStartedAt          JobCompletedAt        Conclusion  AnnotationLevel  Message
+swfz/gh-annotations  Run 1001  push   Sample Job  2023-03-20T10:00:00Z  2023-03-20T10:02:00Z  success     warning          This is a sample annotation
+`),
 		},
 	}
 
@@ -101,7 +67,7 @@ func Test_run(t *testing.T) {
 			if tt.stubs == nil {
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
-					httpmock.JSONResponse(workflowRunPayload),
+					httpmock.FileResponse("./fixtures/workflow_run.json"),
 				)
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs/1001/jobs"),
