@@ -10,39 +10,6 @@ import (
 )
 
 func Test_run(t *testing.T) {
-	workflowJobs := []Job{
-		{
-			Id:          2001,
-			Name:        "Sample Job",
-			CheckRunUrl: "https://example.com/check_runs/2001",
-			Conclusion:  "success",
-			StartedAt:   "2023-03-20T10:00:00Z",
-			CompletedAt: "2023-03-20T10:02:00Z",
-			Status:      "completed",
-			HtmlUrl:     "https://example.com/jobs/2001",
-		},
-	}
-
-	workflowJobsPayload := WorkflowJobs{
-		TotalCount: 1,
-		Jobs:       workflowJobs,
-	}
-
-	annotationsPayload := []Annotation{
-		{
-			Path:            "/path/to/file",
-			BlobHref:        "https://example.com/blob/1",
-			Title:           "Sample Annotation",
-			Message:         "This is a sample annotation",
-			AnnotationLevel: "warning",
-			RawDetails:      "Detailed information",
-			StartLine:       10,
-			StartColumn:     5,
-			EndLine:         12,
-			EndColumn:       8,
-		},
-	}
-
 	tests := []struct {
 		name       string
 		options    Options
@@ -71,11 +38,11 @@ swfz/gh-annotations  Run 1001  push   Sample Job  2023-03-20T10:00:00Z  2023-03-
 				)
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs/1001/jobs"),
-					httpmock.JSONResponse(workflowJobsPayload),
+					httpmock.FileResponse("./fixtures/runs_1001_jobs.json"),
 				)
 				reg.Register(
-					httpmock.REST("GET", "repos/swfz/gh-annotations/check-runs/2001/annotations"),
-					httpmock.JSONResponse(annotationsPayload),
+					httpmock.REST("GET", "repos/swfz/gh-annotations/check-runs/10001/annotations"),
+					httpmock.FileResponse("./fixtures/check_runs_10001_annotations.json"),
 				)
 			} else {
 				tt.stubs(reg)
