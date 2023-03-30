@@ -3,13 +3,13 @@
   "workflow_runs": [
     {
       "workflow_id": 1,
-      "jobs_url": "https://example.com/jobs/1",
+      "jobs_url": "https://example.com/actions/runs/1001/jobs",
       "id": 1001,
       "event": "push",
-      "display_title": "Sample Run",
+      "display_title": "core: Sample Run",
       "head_branch": "main",
-      "html_url": "https://example.com/runs/1001",
-      "name": "Run 1001",
+      "html_url": "https://example.com/actions/runs/1001",
+      "name": "Sample Workflow Run",
       "path": "/path/to/run",
       "status": "completed",
       "started_at": "2023-03-20T10:00:00Z",
