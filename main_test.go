@@ -75,18 +75,6 @@ Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  Anno
 `),
 		},
 		{
-			name: "1workflow, 1run, 2job, 2annotation",
-			skip: true,
-		},
-		{
-			name: "1workflow, 2run, 2job, 1annotation",
-			skip: true,
-		},
-		{
-			name: "2workflow, 2run, 2job, 2annotation",
-			skip: true,
-		},
-		{
 			name:    "1workflow, 2run, 2job. last run has no annotation",
 			options: Options{},
 			stubs: func(reg *httpmock.Registry) {
@@ -106,6 +94,36 @@ Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  Anno
 			wantOut: heredoc.Doc(`
 Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  AnnotationLevel  Message
 `),
+		},
+		{
+			name: "1workflow, 1run, 1job, 2annotation",
+			stubs: func(reg *httpmock.Registry) {
+				reg.Register(
+					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
+					httpmock.FileResponse("./fixtures/workflow_run_2run.json"),
+				)
+				reg.Register(
+					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs/1001/jobs"),
+					httpmock.FileResponse("./fixtures/runs_1001_jobs.json"),
+				)
+				reg.Register(
+					httpmock.REST("GET", "repos/swfz/gh-annotations/check-runs/10001/annotations"),
+					httpmock.FileResponse("./fixtures/check_runs_10001_annotations_2annotations.json"),
+				)
+			},
+			wantOut: heredoc.Doc(`
+Repository           Workflow             Event  Job         JobStartedAt          JobCompletedAt        Conclusion  AnnotationLevel  Message
+swfz/gh-annotations  Sample Workflow Run  push   Sample Job  2023-03-20T10:00:00Z  2023-03-20T10:02:00Z  success     warning          This is a sample annotation
+swfz/gh-annotations  Sample Workflow Run  push   Sample Job  2023-03-20T10:00:00Z  2023-03-20T10:02:00Z  success     warning          annotation in line
+`),
+		},
+		{
+			name: "1workflow, 2run, 2job, 1annotation",
+			skip: true,
+		},
+		{
+			name: "2workflow, 2run, 2job, 2annotation",
+			skip: true,
 		},
 		{
 			name: "json output",
