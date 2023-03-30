@@ -242,6 +242,7 @@ func run(options Options) {
 	} else {
 		out = terminal.Out()
 	}
+	fmt.Printf("%#v\n", termWidth)
 
 	if options.json {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
