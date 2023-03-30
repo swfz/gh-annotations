@@ -26,3 +26,5 @@ jobs:
           cache: true
       - run: go mod download
       - run: go test -v
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
