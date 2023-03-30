@@ -160,8 +160,25 @@ swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T
 			options: Options{
 				json: true,
 			},
-			wantOut: "",
-			skip:    true,
+			wantOut: heredoc.Doc(`
+[
+  {
+    "repository": "swfz/gh-annotations",
+    "workflow_name": "Sample Workflow Run",
+    "workflow_event": "push",
+    "workflow_path": "/path/to/run",
+    "workflow_url": "https://example.com/actions/runs/1001",
+    "workflow_run_started_at": "",
+    "workflow_created_at": "2023-03-20T09:50:00Z",
+    "workflow_updated_at": "2023-03-20T10:05:00Z",
+    "job_name": "Sample Job",
+    "job_conclusion": "success",
+    "job_started_at": "2023-03-20T10:00:00Z",
+    "job_completed_at": "2023-03-20T10:02:00Z",
+    "annotation_level": "warning",
+    "message": "This is a sample annotation"
+  }
+]`),
 		},
 	}
 

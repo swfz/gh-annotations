@@ -158,8 +158,6 @@ func fetchAnnotations(client api.RESTClient, repository string, job Job) ([]Anno
 		return []Annotation{}, err
 	}
 
-	fmt.Printf("%#v\n", annotations)
-
 	return annotations, nil
 }
 
@@ -236,20 +234,19 @@ func run(options Options) {
 		}
 	}
 
+	terminal := term.FromEnv()
+	termWidth, _, _ := terminal.Size()
+	var out io.Writer
+	if options.IO != nil {
+		out = options.IO.Out
+	} else {
+		out = terminal.Out()
+	}
+
 	if options.json {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
-		fmt.Println(string(summaryJson))
+		fmt.Fprintf(out, string(summaryJson))
 	} else {
-		terminal := term.FromEnv()
-		termWidth, _, _ := terminal.Size()
-
-		var out io.Writer
-		if options.IO != nil {
-			out = options.IO.Out
-		} else {
-			out = terminal.Out()
-		}
-
 		tp := tableprinter.New(out, terminal.IsTerminalOutput(), termWidth)
 
 		tp.AddField("Repository")
