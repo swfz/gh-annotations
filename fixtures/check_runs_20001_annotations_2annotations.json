@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/path/to/file",
+    "blob_href": "https://example.com/blob/1",
+    "title": "DEPRECATION WARNING",
+    "message": "This Method is deplicated",
+    "annotation_level": "warning",
+    "raw_details": "Detailed information",
+    "start_line": 10,
+    "start_column": 5,
+    "end_line": 12,
+    "end_column": 8
+  },
+  {
+    "path": "/path/to/file",
+    "blob_href": "https://example.com/blob/1",
+    "title": "DEPRECATION WARNING",
+    "message": "deplicated",
+    "annotation_level": "warning",
+    "raw_details": "",
+    "start_line": 6,
+    "start_column": null,
+    "end_line": 6,
+    "end_column": null
+  }
+]
