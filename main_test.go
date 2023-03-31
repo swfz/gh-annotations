@@ -178,7 +178,8 @@ swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T
     "annotation_level": "warning",
     "message": "This is a sample annotation"
   }
-]`),
+]
+`),
 		},
 	}
 
