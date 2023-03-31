@@ -236,13 +236,16 @@ func run(options Options) {
 
 	terminal := term.FromEnv()
 	termWidth, _, _ := terminal.Size()
+	var width int
 	var out io.Writer
 	if options.IO != nil {
 		out = options.IO.Out
+		width = 300
 	} else {
 		out = terminal.Out()
+		width = termWidth
 	}
-	fmt.Printf("%#v\n", termWidth)
+	fmt.Printf("%#v\n", width)
 
 	if options.json {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
