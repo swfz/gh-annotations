@@ -58,3 +58,9 @@ $ gh annotations -json | jq
 ```shell
 gh extension install swfz/gh-annotations
 ```
+
+## test
+
+```shell
+go test -v
+```

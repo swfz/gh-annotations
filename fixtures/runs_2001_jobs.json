@@ -1,0 +1,27 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 20001,
+      "run_id": 2001,
+      "name": "Awesome First Job",
+      "check_run_url": "https://example.com/check_runs/20001",
+      "conclusion": "success",
+      "started_at": "2023-02-20T10:00:00Z",
+      "completed_at": "2023-02-20T10:02:00Z",
+      "status": "completed",
+      "html_url": "https://example.com/jobs/20001"
+    },
+    {
+      "id": 20002,
+      "run_id": 2001,
+      "name": "Awesome Second Job",
+      "check_run_url": "https://example.com/check_runs/20002",
+      "conclusion": "failure",
+      "started_at": "2023-02-20T10:00:30Z",
+      "completed_at": "2023-02-20T10:02:40Z",
+      "status": "completed",
+      "html_url": "https://example.com/jobs/20002"
+    }
+  ]
+}

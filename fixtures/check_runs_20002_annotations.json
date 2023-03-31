@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/path/to/file",
+    "blob_href": "https://example.com/blob/1",
+    "title": "",
+    "message": "Process completed with exit code 1.",
+    "annotation_level": "failure",
+    "raw_details": "",
+    "start_line": 12,
+    "start_column": null,
+    "end_line": 12,
+    "end_column": null
+  }
+]

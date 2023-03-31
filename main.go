@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/cli/cli/v2/pkg/iostreams"
 	"github.com/cli/go-gh"
 	"github.com/cli/go-gh/pkg/api"
 	"github.com/cli/go-gh/pkg/tableprinter"
 	"github.com/cli/go-gh/pkg/term"
+	"io"
 	"log"
 	"strconv"
 )
@@ -79,7 +81,8 @@ type Record struct {
 	Message         string `json:"message"`
 }
 
-func latest(workflowRuns WorkflowRuns) []Run {
+// Retrieve the latest runs from the given WorkflowRuns
+func latestRuns(workflowRuns WorkflowRuns) []Run {
 	var latestRuns []Run
 	for _, run := range workflowRuns.Runs {
 		var existRun bool = false
@@ -98,49 +101,67 @@ func latest(workflowRuns WorkflowRuns) []Run {
 	return latestRuns
 }
 
-func getRuns(client api.RESTClient, repository string) WorkflowRuns {
+// Fetch workflow runs from the given repository
+func fetchWorkflowRuns(client api.RESTClient, repository string) (WorkflowRuns, error) {
 	var res map[string]interface{}
 	path := "repos/" + repository + "/actions/runs"
-	client.Get(path, &res)
-	//fmt.Printf("%+v", res)
+	err := client.Get(path, &res)
+
+	if err != nil {
+		return WorkflowRuns{}, err
+	}
 
 	jsonStr, _ := json.Marshal(res)
 	var workflowRunsRes WorkflowRuns
-	if err := json.Unmarshal([]byte(jsonStr), &workflowRunsRes); err != nil {
-		panic(err)
+	err = json.Unmarshal([]byte(jsonStr), &workflowRunsRes)
+	if err != nil {
+		return WorkflowRuns{}, err
 	}
 
-	return workflowRunsRes
+	return workflowRunsRes, nil
 }
 
-func getJobs(client api.RESTClient, repository string, run Run) WorkflowJobs {
+// Fetch jobs for the given repository and run
+func fetchJobs(client api.RESTClient, repository string, run Run) (WorkflowJobs, error) {
 	var res map[string]interface{}
 	path := "repos/" + repository + "/actions/runs/" + strconv.Itoa(run.Id) + "/jobs"
-	client.Get(path, &res)
+	err := client.Get(path, &res)
+
+	if err != nil {
+		return WorkflowJobs{}, err
+	}
 
 	jsonStr, _ := json.Marshal(res)
 	var jobs WorkflowJobs
-	if err := json.Unmarshal([]byte(jsonStr), &jobs); err != nil {
-		panic(err)
+	err = json.Unmarshal([]byte(jsonStr), &jobs)
+	if err != nil {
+		return WorkflowJobs{}, err
 	}
 
-	return jobs
+	return jobs, nil
 }
 
-func getAnnotations(client api.RESTClient, repository string, job Job) []Annotation {
+// Fetch annotations for the given repository and job
+func fetchAnnotations(client api.RESTClient, repository string, job Job) ([]Annotation, error) {
 	var res []interface{}
 	path := "repos/" + repository + "/check-runs/" + strconv.Itoa(job.Id) + "/annotations"
-	client.Get(path, &res)
+	err := client.Get(path, &res)
+
+	if err != nil {
+		return []Annotation{}, err
+	}
 
 	jsonStr, _ := json.Marshal(res)
 	var annotations []Annotation
-	if err := json.Unmarshal([]byte(jsonStr), &annotations); err != nil {
-		panic(err)
+	err = json.Unmarshal([]byte(jsonStr), &annotations)
+	if err != nil {
+		return []Annotation{}, err
 	}
 
-	return annotations
+	return annotations, nil
 }
 
+// Convert the given run, job, and annotation to a Record
 func toRecord(repository string, run Run, job Job, annotation Annotation) Record {
 	r := Record{
 		Repository:      repository,
@@ -162,17 +183,15 @@ func toRecord(repository string, run Run, job Job, annotation Annotation) Record
 	return r
 }
 
-func main() {
-	var options struct {
-		repo string
-		json bool
-	}
+type Options struct {
+	IO          *iostreams.IOStreams
+	HttpOptions api.ClientOptions
+	repo        string
+	json        bool
+}
 
-	flag.StringVar(&options.repo, "repo", "", "Repository Name eg) owner/repo")
-	flag.BoolVar(&options.json, "json", false, "Output JSON")
-	flag.Parse()
-
-	client, err := gh.RESTClient(nil)
+func run(options Options) {
+	client, err := gh.RESTClient(&options.HttpOptions)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -187,38 +206,48 @@ func main() {
 		repositoryPath = currentRepository.Owner() + "/" + currentRepository.Name()
 	}
 
-	workflowRuns := getRuns(client, repositoryPath)
-	latestRuns := latest(workflowRuns)
+	workflowRuns, err := fetchWorkflowRuns(client, repositoryPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	latestRuns := latestRuns(workflowRuns)
 
 	var summary []Record
 
-	//fmt.Printf("Repository: %s/%s\n", currentRepository.Owner(), currentRepository.Name())
 	for _, run := range latestRuns {
-		//fmt.Printf("Workflow(%s): %s(%s)\n", run.Event, run.Name, run.Path)
+		// Fetch jobs for the given run
+		jobs, err := fetchJobs(client, repositoryPath, run)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		jobs := getJobs(client, repositoryPath, run)
 		for _, job := range jobs.Jobs {
-			//fmt.Printf("\tJob name: %s, %s\n", job.Name, job.Conclusion)
-			annotations := getAnnotations(client, repositoryPath, job)
+			annotations, err := fetchAnnotations(client, repositoryPath, job)
+			if err != nil {
+				log.Fatal(err)
+			}
+
 			for _, annotation := range annotations {
-				//fmt.Printf("\t\t%s: %s\n", annotation.AnnotationLevel, annotation.Message)
-				r := toRecord(repositoryPath, run, job, annotation)
-				summary = append(summary, r)
+				record := toRecord(repositoryPath, run, job, annotation)
+				summary = append(summary, record)
 			}
 		}
 	}
 
-	j, err := json.Marshal(summary)
-	if err != nil {
-		log.Fatal(err)
+	terminal := term.FromEnv()
+	termWidth, _, _ := terminal.Size()
+	var out io.Writer
+	if options.IO != nil {
+		out = options.IO.Out
+	} else {
+		out = terminal.Out()
 	}
 
 	if options.json {
-		fmt.Printf("%s\n", string(j))
+		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
+		fmt.Fprintf(out, string(summaryJson))
 	} else {
-		terminal := term.FromEnv()
-		termWidth, _, _ := terminal.Size()
-		tp := tableprinter.New(terminal.Out(), terminal.IsTerminalOutput(), termWidth)
+		tp := tableprinter.New(out, terminal.IsTerminalOutput(), termWidth)
 
 		tp.AddField("Repository")
 		tp.AddField("Workflow")
@@ -246,4 +275,14 @@ func main() {
 
 		tp.Render()
 	}
+}
+
+func main() {
+	var options Options
+
+	flag.StringVar(&options.repo, "repo", "", "Repository Name eg) owner/repo")
+	flag.BoolVar(&options.json, "json", false, "Output JSON")
+	flag.Parse()
+
+	run(options)
 }

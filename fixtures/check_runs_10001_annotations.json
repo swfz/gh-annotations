@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/path/to/file",
+    "blob_href": "https://example.com/blob/1",
+    "title": "Sample Annotation",
+    "message": "This is a sample annotation",
+    "annotation_level": "warning",
+    "raw_details": "Detailed information",
+    "start_line": 10,
+    "start_column": 5,
+    "end_line": 12,
+    "end_column": 8
+  }
+]
