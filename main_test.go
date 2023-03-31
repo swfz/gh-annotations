@@ -178,7 +178,22 @@ swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T
     "annotation_level": "warning",
     "message": "This is a sample annotation"
   }
-]`),
+]
+`),
+		},
+		{
+			name: "json output, empty value",
+			options: Options{
+				json: true,
+			},
+			stubs: func(reg *httpmock.Registry) {
+				reg.Register(
+					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
+					httpmock.FileResponse("./fixtures/workflow_run_norun.json"),
+				)
+			},
+			wantOut: heredoc.Doc(`[]
+`),
 		},
 	}
 
