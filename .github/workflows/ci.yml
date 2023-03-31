@@ -26,7 +26,7 @@ jobs:
           cache: true
       - run: go mod download
       - name: test
-        shell: 'script -q -e -c "bash {0}"'
+        shell: 'script -q -e -c "stty cols 200 rows 100; bash {0}"'
         run: |
           go test -v
         env:
