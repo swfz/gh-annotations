@@ -246,12 +246,13 @@ func run(options Options) {
 		width = termWidth
 	}
 	fmt.Printf("%#v\n", width)
+	fmt.Printf("%#v\n", terminal.IsTerminalOutput())
 
 	if options.json {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
 		fmt.Fprintf(out, string(summaryJson))
 	} else {
-		tp := tableprinter.New(out, terminal.IsTerminalOutput(), termWidth)
+		tp := tableprinter.New(out, terminal.IsTerminalOutput(), width)
 
 		tp.AddField("Repository")
 		tp.AddField("Workflow")
