@@ -212,7 +212,7 @@ func run(options Options) {
 	}
 	latestRuns := latestRuns(workflowRuns)
 
-	var summary []Record
+	summary := []Record{}
 
 	for _, run := range latestRuns {
 		// Fetch jobs for the given run
