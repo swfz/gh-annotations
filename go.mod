@@ -6,7 +6,7 @@ require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/cli/cli/v2 v2.26.1
 	github.com/cli/go-gh v1.2.1
-	github.com/stretchr/testify v1.7.5
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
