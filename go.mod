@@ -7,13 +7,14 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/cli/cli/v2 v2.27.0
 	github.com/cli/go-gh v1.2.1
+	github.com/cli/go-gh/v2 v2.0.0
 	github.com/stretchr/testify v1.8.2
 )
 
 require (
 	github.com/briandowns/spinner v1.18.1 // indirect
 	github.com/cli/safeexec v1.0.1 // indirect
-	github.com/cli/shurcooL-graphql v0.0.2 // indirect
+	github.com/cli/shurcooL-graphql v0.0.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
