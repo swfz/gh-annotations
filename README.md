@@ -5,13 +5,13 @@ Extension to output the list of annotations from the recently executed Workflow 
 ## Install
 
 ```shell
-gh extension install swfz/gh-annotations
+$ gh extension install swfz/gh-annotations
 ```
 
 ## Usage
 
 ```shell
-gh annotations
+$ gh annotations
 ```
 
 ### Optional Args
@@ -62,5 +62,5 @@ $ gh annotations -json | jq
 ## test
 
 ```shell
-go test -v
+$ go test -v
 ```
