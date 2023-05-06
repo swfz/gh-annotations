@@ -20,7 +20,7 @@ $ gh annotations
 $ gh annotations --help
   -repo string
         Optional Repository Name eg) owner/repo
-  -json bool 
+  -json bool
         Output JSON Format
 ```
 
