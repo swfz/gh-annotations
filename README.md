@@ -2,10 +2,16 @@
 
 Extension to output the list of annotations from the recently executed Workflow in the current repository.
 
+## Install
+
+```shell
+$ gh extension install swfz/gh-annotations
+```
+
 ## Usage
 
 ```shell
-gh annotations
+$ gh annotations
 ```
 
 ### Optional Args
@@ -14,7 +20,7 @@ gh annotations
 $ gh annotations --help
   -repo string
         Optional Repository Name eg) owner/repo
-  -json bool 
+  -json bool
         Output JSON Format
 ```
 
@@ -53,14 +59,8 @@ $ gh annotations -json | jq
 ]
 ```
 
-## Install
-
-```shell
-gh extension install swfz/gh-annotations
-```
-
 ## test
 
 ```shell
-go test -v
+$ go test -v
 ```
