@@ -11,6 +11,7 @@ import (
 	"github.com/cli/go-gh/pkg/term"
 	"io"
 	"log"
+	"os"
 	"strconv"
 )
 
@@ -283,6 +284,14 @@ func main() {
 	flag.StringVar(&options.repo, "repo", "", "Repository Name eg) owner/repo")
 	flag.BoolVar(&options.json, "json", false, "Output JSON")
 	flag.Parse()
+
+	arg := flag.Arg(0)
+
+	if arg != "" {
+		fmt.Println("Did you mean this?")
+		fmt.Printf("\tgh annotations -repo %s\n", arg)
+		os.Exit(1)
+	}
 
 	run(options)
 }
