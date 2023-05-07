@@ -62,5 +62,9 @@ $ gh annotations -json | jq
 ## test
 
 ```shell
-$ go test -v
+$ GH_REPO=swfz/gh-annotations go test -v
 ```
+
+[reference](https://pkg.go.dev/github.com/cli/go-gh#section-readme)
+
+Since using CurrentRepository, a function that also affects the test, we need to set the environment variable `GH_REPO` when we run the test so that the output matches
