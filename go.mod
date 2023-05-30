@@ -8,7 +8,7 @@ require (
 	github.com/cli/cli/v2 v2.29.0
 	github.com/cli/go-gh v1.2.1
 	github.com/cli/go-gh/v2 v2.0.0
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
