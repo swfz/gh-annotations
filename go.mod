@@ -7,7 +7,7 @@ toolchain go1.21.0
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/cli/cli/v2 v2.33.0
+	github.com/cli/cli/v2 v2.34.0
 	github.com/cli/go-gh v1.2.1
 	github.com/cli/go-gh/v2 v2.3.0
 	github.com/stretchr/testify v1.8.4
@@ -33,8 +33,8 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/thlib/go-timezone-local v0.0.0-20210907160436-ef149e42d28e // indirect
-	golang.org/x/net v0.9.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/term v0.7.0 // indirect
+	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/term v0.11.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
