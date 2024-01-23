@@ -9,7 +9,7 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/cli/cli/v2 v2.40.1
 	github.com/cli/go-gh v1.2.1
-	github.com/cli/go-gh/v2 v2.4.1-0.20231120145612-d32c104a9a25
+	github.com/cli/go-gh/v2 v2.4.1-0.20240123123157-d88d88f917cd
 	github.com/stretchr/testify v1.8.4
 )
 

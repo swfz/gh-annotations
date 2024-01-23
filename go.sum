@@ -49,6 +49,8 @@ github.com/cli/go-gh/v2 v2.4.1-0.20231024095351-47a83eeb1778 h1:2WcQtkNIafTIimwJ
 github.com/cli/go-gh/v2 v2.4.1-0.20231024095351-47a83eeb1778/go.mod h1:h3salfqqooVpzKmHp6aUdeNx62UmxQRpLbagFSHTJGQ=
 github.com/cli/go-gh/v2 v2.4.1-0.20231120145612-d32c104a9a25 h1:m2opPgNTaKx1QydI4NfGdZqiYkA/Kl9a7tsDSjHgWWg=
 github.com/cli/go-gh/v2 v2.4.1-0.20231120145612-d32c104a9a25/go.mod h1:h3salfqqooVpzKmHp6aUdeNx62UmxQRpLbagFSHTJGQ=
+github.com/cli/go-gh/v2 v2.4.1-0.20240123123157-d88d88f917cd h1:p4eBjb6xuD3twx4HtCeHmg5phup4neur+wNAgeu4rrU=
+github.com/cli/go-gh/v2 v2.4.1-0.20240123123157-d88d88f917cd/go.mod h1:h3salfqqooVpzKmHp6aUdeNx62UmxQRpLbagFSHTJGQ=
 github.com/cli/safeexec v1.0.1 h1:e/C79PbXF4yYTN/wauC4tviMxEV13BwljGj0N9j+N00=
 github.com/cli/safeexec v1.0.1/go.mod h1:Z/D4tTN8Vs5gXYHDCbaM1S/anmEDnJb1iW0+EJ5zx3Q=
 github.com/cli/shurcooL-graphql v0.0.2 h1:rwP5/qQQ2fM0TzkUTwtt6E2LbIYf6R+39cUXTa04NYk=
