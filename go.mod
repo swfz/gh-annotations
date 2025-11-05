@@ -5,7 +5,7 @@ go 1.22.5
 toolchain go1.23.3
 
 require (
-	github.com/MakeNowJust/heredoc v1.0.0
+	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/cli/cli/v2 v2.62.0
 	github.com/cli/go-gh v1.2.1
