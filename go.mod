@@ -7,7 +7,7 @@ toolchain go1.23.3
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/cli/cli/v2 v2.62.0
+	github.com/cli/cli/v2 v2.67.0
 	github.com/cli/go-gh v1.2.1
 	github.com/cli/go-gh/v2 v2.12.1
 	github.com/stretchr/testify v1.10.0
@@ -25,7 +25,7 @@ require (
 	github.com/henvic/httpretty v0.1.4 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
