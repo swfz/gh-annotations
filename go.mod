@@ -10,7 +10,7 @@ require (
 	github.com/cli/cli/v2 v2.67.0
 	github.com/cli/go-gh v1.2.1
 	github.com/cli/go-gh/v2 v2.12.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
