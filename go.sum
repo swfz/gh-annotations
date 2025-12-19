@@ -47,6 +47,8 @@ github.com/cli/cli/v2 v2.57.0 h1:cUcwTQoOcYZkWovQyoyFYeCb943d1MisVO6RUD2ryls=
 github.com/cli/cli/v2 v2.57.0/go.mod h1:oFo4IYCXt30ZTKKljzZgeiEjmzKQyq0Zb9Tv8/SG9Lo=
 github.com/cli/cli/v2 v2.62.0 h1:djXx4/6kJvS8/KSAYzkXQvAmUby5agYt8u9PkInkmd4=
 github.com/cli/cli/v2 v2.62.0/go.mod h1:lFlAu9/wJZJFfPbpKYB1YK8L3HmaXF87NNk2mLRRFvs=
+github.com/cli/cli/v2 v2.67.0 h1:uV40wKPbtHPJH8coGSKZDqxw9fNeqlWqPwE7pdefQFI=
+github.com/cli/cli/v2 v2.67.0/go.mod h1:6VPo4p7DcIiFfJtn5iBPwAjNcfmI0zlZKwVtM7EtIig=
 github.com/cli/go-gh v1.0.0 h1:zE1YUAUYqGXNZuICEBeOkIMJ5F50BS0ftvtoWGlsEFI=
 github.com/cli/go-gh v1.0.0/go.mod h1:bqxLdCoTZ73BuiPEJx4olcO/XKhVZaFDchFagYRBweE=
 github.com/cli/go-gh v1.2.1 h1:xFrjejSsgPiwXFP6VYynKWwxLQcNJy3Twbu82ZDlR/o=
@@ -114,6 +116,8 @@ github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i
 github.com/mattn/go-colorable v0.1.2/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
+github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
+github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
 github.com/mattn/go-isatty v0.0.8/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
