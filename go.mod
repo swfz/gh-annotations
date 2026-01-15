@@ -2,7 +2,7 @@ module github.com/swfz/gh-annotations
 
 go 1.23.0
 
-toolchain go1.25.5
+toolchain go1.25.6
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
