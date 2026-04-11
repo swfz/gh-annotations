@@ -1,7 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    ":pinDevDependencies",
+    "security:openssf-scorecard",
+    "abandonments:recommended"
+  ],
   "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
-  "osvVulnerabilityAlerts": true
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "renovate"]
+  },
+  "labels": ["renovate"]
 }
