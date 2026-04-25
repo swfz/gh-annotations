@@ -20,7 +20,7 @@ func Test_run(t *testing.T) {
 	}{
 		{
 			name:    "1workflow, 1run, 1job, 1annotation",
-			options: Options{},
+			options: Options{repo: "swfz/gh-annotations"},
 			stubs: func(reg *httpmock.Registry) {
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
@@ -35,14 +35,11 @@ func Test_run(t *testing.T) {
 					httpmock.FileResponse("./fixtures/check_runs_10001_annotations.json"),
 				)
 			},
-			wantOut: heredoc.Doc(`
-Repository           Workflow             Event  Job         JobStartedAt          JobCompletedAt        Conclusion  AnnotationLevel  Message
-swfz/gh-annotations  Sample Workflow Run  push   Sample Job  2023-03-20T10:00:00Z  2023-03-20T10:02:00Z  success     warning          This is a sample annotation
-`),
+			wantOut: "Repository\tWorkflow\tEvent\tJob\tJobStartedAt\tJobCompletedAt\tConclusion\tAnnotationLevel\tMessage\nswfz/gh-annotations\tSample Workflow Run\tpush\tSample Job\t2023-03-20T10:00:00Z\t2023-03-20T10:02:00Z\tsuccess\twarning\tThis is a sample annotation\n",
 		},
 		{
 			name:    "1workflow, 1run, 1job, 0annotation",
-			options: Options{},
+			options: Options{repo: "swfz/gh-annotations"},
 			stubs: func(reg *httpmock.Registry) {
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
@@ -57,26 +54,22 @@ swfz/gh-annotations  Sample Workflow Run  push   Sample Job  2023-03-20T10:00:00
 					httpmock.FileResponse("./fixtures/check_runs_10001_annotations_0.json"),
 				)
 			},
-			wantOut: heredoc.Doc(`
-Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  AnnotationLevel  Message
-`),
+			wantOut: "Repository\tWorkflow\tEvent\tJob\tJobStartedAt\tJobCompletedAt\tConclusion\tAnnotationLevel\tMessage\n",
 		},
 		{
 			name:    "1workflow no runs",
-			options: Options{},
+			options: Options{repo: "swfz/gh-annotations"},
 			stubs: func(reg *httpmock.Registry) {
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
 					httpmock.FileResponse("./fixtures/workflow_run_norun.json"),
 				)
 			},
-			wantOut: heredoc.Doc(`
-Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  AnnotationLevel  Message
-`),
+			wantOut: "Repository\tWorkflow\tEvent\tJob\tJobStartedAt\tJobCompletedAt\tConclusion\tAnnotationLevel\tMessage\n",
 		},
 		{
 			name:    "1workflow, 2run, 2job. last run has no annotation",
-			options: Options{},
+			options: Options{repo: "swfz/gh-annotations"},
 			stubs: func(reg *httpmock.Registry) {
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
@@ -91,13 +84,11 @@ Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  Anno
 					httpmock.FileResponse("./fixtures/check_runs_10001_annotations_0.json"),
 				)
 			},
-			wantOut: heredoc.Doc(`
-Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  AnnotationLevel  Message
-`),
+			wantOut: "Repository\tWorkflow\tEvent\tJob\tJobStartedAt\tJobCompletedAt\tConclusion\tAnnotationLevel\tMessage\n",
 		},
 		{
 			name:    "1workflow, 1run, 1job, 2annotation",
-			options: Options{},
+			options: Options{repo: "swfz/gh-annotations"},
 			stubs: func(reg *httpmock.Registry) {
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
@@ -112,15 +103,11 @@ Repository  Workflow  Event  Job  JobStartedAt  JobCompletedAt  Conclusion  Anno
 					httpmock.FileResponse("./fixtures/check_runs_10001_annotations_2annotations.json"),
 				)
 			},
-			wantOut: heredoc.Doc(`
-Repository           Workflow             Event  Job         JobStartedAt          JobCompletedAt        Conclusion  AnnotationLevel  Message
-swfz/gh-annotations  Sample Workflow Run  push   Sample Job  2023-03-20T10:00:00Z  2023-03-20T10:02:00Z  success     warning          This is a sample annotation
-swfz/gh-annotations  Sample Workflow Run  push   Sample Job  2023-03-20T10:00:00Z  2023-03-20T10:02:00Z  success     warning          annotation in line
-`),
+			wantOut: "Repository\tWorkflow\tEvent\tJob\tJobStartedAt\tJobCompletedAt\tConclusion\tAnnotationLevel\tMessage\nswfz/gh-annotations\tSample Workflow Run\tpush\tSample Job\t2023-03-20T10:00:00Z\t2023-03-20T10:02:00Z\tsuccess\twarning\tThis is a sample annotation\nswfz/gh-annotations\tSample Workflow Run\tpush\tSample Job\t2023-03-20T10:00:00Z\t2023-03-20T10:02:00Z\tsuccess\twarning\tannotation in line\n",
 		},
 		{
 			name:    "2workflow x 2run, 3job, 4annotation",
-			options: Options{},
+			options: Options{repo: "swfz/gh-annotations"},
 			stubs: func(reg *httpmock.Registry) {
 				reg.Register(
 					httpmock.REST("GET", "repos/swfz/gh-annotations/actions/runs"),
@@ -147,17 +134,12 @@ swfz/gh-annotations  Sample Workflow Run  push   Sample Job  2023-03-20T10:00:00
 					httpmock.FileResponse("./fixtures/check_runs_20002_annotations.json"),
 				)
 			},
-			wantOut: heredoc.Doc(`
-Repository           Workflow             Event  Job                 JobStartedAt          JobCompletedAt        Conclusion  AnnotationLevel  Message
-swfz/gh-annotations  Sample Workflow Run  push   Sample Job          2023-03-20T10:00:00Z  2023-03-20T10:02:00Z  success     warning          This is a sample annotation
-swfz/gh-annotations  Awesome Workflow     push   Awesome First Job   2023-02-20T10:00:00Z  2023-02-20T10:02:00Z  success     warning          This Method is deplicated
-swfz/gh-annotations  Awesome Workflow     push   Awesome First Job   2023-02-20T10:00:00Z  2023-02-20T10:02:00Z  success     warning          deplicated
-swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T10:00:30Z  2023-02-20T10:02:40Z  failure     failure          Process completed with exit code 1.
-`),
+			wantOut: "Repository\tWorkflow\tEvent\tJob\tJobStartedAt\tJobCompletedAt\tConclusion\tAnnotationLevel\tMessage\nswfz/gh-annotations\tSample Workflow Run\tpush\tSample Job\t2023-03-20T10:00:00Z\t2023-03-20T10:02:00Z\tsuccess\twarning\tThis is a sample annotation\nswfz/gh-annotations\tAwesome Workflow\tpush\tAwesome First Job\t2023-02-20T10:00:00Z\t2023-02-20T10:02:00Z\tsuccess\twarning\tThis Method is deplicated\nswfz/gh-annotations\tAwesome Workflow\tpush\tAwesome First Job\t2023-02-20T10:00:00Z\t2023-02-20T10:02:00Z\tsuccess\twarning\tdeplicated\nswfz/gh-annotations\tAwesome Workflow\tpush\tAwesome Second Job\t2023-02-20T10:00:30Z\t2023-02-20T10:02:40Z\tfailure\tfailure\tProcess completed with exit code 1.\n",
 		},
 		{
 			name: "json output",
 			options: Options{
+				repo: "swfz/gh-annotations",
 				json: true,
 			},
 			wantOut: heredoc.Doc(`
@@ -184,6 +166,7 @@ swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T
 		{
 			name: "json output, empty value",
 			options: Options{
+				repo: "swfz/gh-annotations",
 				json: true,
 			},
 			stubs: func(reg *httpmock.Registry) {
@@ -200,7 +183,7 @@ swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.skip {
-				t.Skipf(tt.name + ". case skipped.")
+				t.Skipf("%s. case skipped.", tt.name)
 			}
 
 			reg := &httpmock.Registry{}
@@ -225,13 +208,13 @@ swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T
 			}
 
 			var httpOptions = api.ClientOptions{
+				AuthToken: "test-token",
 				Transport: reg,
 			}
 
 			tt.options.HttpOptions = httpOptions
 
 			ios, _, stdout, stderr := iostreams.Test()
-			ios.SetStdoutTTY(true)
 			tt.options.IO = ios
 
 			run(tt.options)
