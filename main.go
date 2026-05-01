@@ -245,7 +245,7 @@ func run(options Options) {
 
 	if options.json {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
-		fmt.Fprintf(out, string(summaryJson)+"\n")
+		fmt.Fprintf(out, "%s\n", string(summaryJson))
 	} else {
 		tp := tableprinter.New(out, terminal.IsTerminalOutput(), termWidth)
 
