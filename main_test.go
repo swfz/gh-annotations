@@ -200,7 +200,7 @@ swfz/gh-annotations  Awesome Workflow     push   Awesome Second Job  2023-02-20T
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.skip {
-				t.Skipf(tt.name + ". case skipped.")
+				t.Skipf("%s. case skipped.", tt.name)
 			}
 
 			reg := &httpmock.Registry{}
