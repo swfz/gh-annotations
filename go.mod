@@ -1,6 +1,6 @@
 module github.com/swfz/gh-annotations
 
-go 1.24.0
+go 1.25.0
 
 toolchain go1.26.2
 
@@ -9,7 +9,7 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/cli/cli/v2 v2.67.0
 	github.com/cli/go-gh v1.2.1
-	github.com/cli/go-gh/v2 v2.12.1
+	github.com/cli/go-gh/v2 v2.13.0
 	github.com/stretchr/testify v1.11.1
 )
 
