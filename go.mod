@@ -6,17 +6,15 @@ toolchain go1.26.2
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/cli/cli/v2 v2.92.0
 	github.com/cli/go-gh v1.2.1
-	github.com/cli/go-gh/v2 v2.13.0
 	github.com/stretchr/testify v1.11.1
 )
 
 require (
-	github.com/aymanbagabas/go-osc52 v1.0.3 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/briandowns/spinner v1.23.2 // indirect
+	github.com/cli/go-gh/v2 v2.13.0 // indirect
 	github.com/cli/safeexec v1.0.1 // indirect
 	github.com/cli/shurcooL-graphql v0.0.4 // indirect
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
@@ -35,7 +33,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/thlib/go-timezone-local v0.0.6 // indirect
-	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/term v0.42.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
