@@ -1,6 +1,6 @@
 module github.com/swfz/gh-annotations
 
-go 1.26.1
+go 1.26.3
 
 toolchain go1.26.3
 
