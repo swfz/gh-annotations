@@ -231,7 +231,7 @@ func Test_run(t *testing.T) {
 			tt.options.HttpOptions = httpOptions
 
 			ios, _, stdout, stderr := iostreams.Test()
-			ios.SetStdoutTTY(true)
+			ios.SetStdoutTTY(false)
 			tt.options.IO = ios
 
 			run(tt.options)

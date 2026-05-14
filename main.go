@@ -239,8 +239,13 @@ func run(options Options) {
 	terminal := term.FromEnv()
 	termWidth, _, _ := terminal.Size()
 	var out io.Writer
+	isTTY := terminal.IsTerminalOutput()
 	if options.IO != nil {
 		out = options.IO.Out
+		isTTY = options.IO.IsStdoutTTY()
+		if w := options.IO.TerminalWidth(); w > 0 {
+			termWidth = w
+		}
 	} else {
 		out = terminal.Out()
 	}
@@ -249,7 +254,7 @@ func run(options Options) {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
 		fmt.Fprintf(out, "%s\n", string(summaryJson))
 	} else {
-		tp := tableprinter.New(out, terminal.IsTerminalOutput(), termWidth)
+		tp := tableprinter.New(out, isTTY, termWidth)
 
 		tp.AddField("Repository")
 		tp.AddField("Workflow")
