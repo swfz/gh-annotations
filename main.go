@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/cli/cli/v2/pkg/iostreams"
-	"github.com/cli/go-gh"
-	"github.com/cli/go-gh/pkg/api"
-	"github.com/cli/go-gh/pkg/tableprinter"
-	"github.com/cli/go-gh/pkg/term"
 	"io"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/cli/cli/v2/pkg/iostreams"
+	"github.com/cli/go-gh/v2/pkg/api"
+	"github.com/cli/go-gh/v2/pkg/repository"
+	"github.com/cli/go-gh/v2/pkg/tableprinter"
+	"github.com/cli/go-gh/v2/pkg/term"
 )
 
 type Run struct {
@@ -103,7 +104,7 @@ func latestRuns(workflowRuns WorkflowRuns) []Run {
 }
 
 // Fetch workflow runs from the given repository
-func fetchWorkflowRuns(client api.RESTClient, repository string) (WorkflowRuns, error) {
+func fetchWorkflowRuns(client *api.RESTClient, repository string) (WorkflowRuns, error) {
 	var res map[string]interface{}
 	path := "repos/" + repository + "/actions/runs"
 	err := client.Get(path, &res)
@@ -123,7 +124,7 @@ func fetchWorkflowRuns(client api.RESTClient, repository string) (WorkflowRuns, 
 }
 
 // Fetch jobs for the given repository and run
-func fetchJobs(client api.RESTClient, repository string, run Run) (WorkflowJobs, error) {
+func fetchJobs(client *api.RESTClient, repository string, run Run) (WorkflowJobs, error) {
 	var res map[string]interface{}
 	path := "repos/" + repository + "/actions/runs/" + strconv.Itoa(run.Id) + "/jobs"
 	err := client.Get(path, &res)
@@ -143,7 +144,7 @@ func fetchJobs(client api.RESTClient, repository string, run Run) (WorkflowJobs,
 }
 
 // Fetch annotations for the given repository and job
-func fetchAnnotations(client api.RESTClient, repository string, job Job) ([]Annotation, error) {
+func fetchAnnotations(client *api.RESTClient, repository string, job Job) ([]Annotation, error) {
 	var res []interface{}
 	path := "repos/" + repository + "/check-runs/" + strconv.Itoa(job.Id) + "/annotations"
 	err := client.Get(path, &res)
@@ -192,7 +193,7 @@ type Options struct {
 }
 
 func run(options Options) {
-	client, err := gh.RESTClient(&options.HttpOptions)
+	client, err := api.NewRESTClient(options.HttpOptions)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -203,8 +204,8 @@ func run(options Options) {
 	if options.repo != "" {
 		repositoryPath = options.repo
 	} else {
-		currentRepository, _ := gh.CurrentRepository()
-		repositoryPath = currentRepository.Owner() + "/" + currentRepository.Name()
+		currentRepository, _ := repository.Current()
+		repositoryPath = currentRepository.Owner + "/" + currentRepository.Name
 	}
 
 	workflowRuns, err := fetchWorkflowRuns(client, repositoryPath)
@@ -238,8 +239,13 @@ func run(options Options) {
 	terminal := term.FromEnv()
 	termWidth, _, _ := terminal.Size()
 	var out io.Writer
+	isTTY := terminal.IsTerminalOutput()
 	if options.IO != nil {
 		out = options.IO.Out
+		isTTY = options.IO.IsStdoutTTY()
+		if w := options.IO.TerminalWidth(); w > 0 {
+			termWidth = w
+		}
 	} else {
 		out = terminal.Out()
 	}
@@ -248,7 +254,7 @@ func run(options Options) {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
 		fmt.Fprintf(out, "%s\n", string(summaryJson))
 	} else {
-		tp := tableprinter.New(out, terminal.IsTerminalOutput(), termWidth)
+		tp := tableprinter.New(out, isTTY, termWidth)
 
 		tp.AddField("Repository")
 		tp.AddField("Workflow")
