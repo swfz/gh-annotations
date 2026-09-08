@@ -3,7 +3,7 @@ module github.com/swfz/gh-annotations
 go 1.26.3
 
 require (
-	github.com/cli/cli/v2 v2.98.0
+	github.com/cli/cli/v2 v2.99.0
 	github.com/cli/go-gh/v2 v2.13.0
 	github.com/stretchr/testify v1.12.1
 )
@@ -28,7 +28,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
-	github.com/mattn/go-runewidth v0.0.24 // indirect
+	github.com/mattn/go-runewidth v0.0.27 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
