@@ -1,10 +1,10 @@
 module github.com/swfz/gh-annotations
 
-go 1.26.3
+go 1.27.0
 
 require (
-	github.com/cli/cli/v2 v2.100.0
-	github.com/cli/go-gh/v2 v2.16.0
+	github.com/cli/cli/v2 v2.101.0
+	github.com/cli/go-gh/v2 v2.16.1
 	github.com/stretchr/testify v1.12.1
 )
 
@@ -37,8 +37,8 @@ require (
 	github.com/thlib/go-timezone-local v0.0.8 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/term v0.45.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
