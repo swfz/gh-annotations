@@ -1,0 +1,33 @@
+name: タスク
+description: 実装・改善のタスク。完了条件はコマンドで確認できる形で書く
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: なぜこの変更が必要か
+    validations:
+      required: true
+  - type: textarea
+    id: todo
+    attributes:
+      label: やること
+      description: 変更する内容。箇条書きで
+      placeholder: |
+        - 
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+      description: 満たしたか確認できる条件。可能ならコマンドと期待する結果で書く(例 `go test ./...` が成功する)
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: 範囲外
+      description: この Issue ではやらないこと
+    validations:
+      required: false
