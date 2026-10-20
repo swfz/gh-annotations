@@ -87,7 +87,7 @@ type Record struct {
 func latestRuns(workflowRuns WorkflowRuns) []Run {
 	var latestRuns []Run
 	for _, run := range workflowRuns.Runs {
-		var existRun bool = false
+		existRun := false
 
 		for _, latest := range latestRuns {
 			if latest.WorkflowId == run.WorkflowId {
@@ -252,7 +252,7 @@ func run(options Options) {
 
 	if options.json {
 		summaryJson, _ := json.MarshalIndent(summary, "", "  ")
-		fmt.Fprintf(out, "%s\n", string(summaryJson))
+		_, _ = fmt.Fprintf(out, "%s\n", string(summaryJson))
 	} else {
 		tp := tableprinter.New(out, isTTY, termWidth)
 
@@ -280,7 +280,7 @@ func run(options Options) {
 			tp.EndRow()
 		}
 
-		tp.Render()
+		_ = tp.Render()
 	}
 }
 
