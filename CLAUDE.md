@@ -20,6 +20,8 @@ gofmt -l .                  # 整形漏れの確認(出力が空なら OK)
 golangci-lint run ./...     # lint(設定は .golangci.yml。CI の lint ジョブと同じ)
 ```
 
+コミット前フックは `lefthook.yml`(gofmt / go vet / golangci-lint)。clone 後に一度 `lefthook install` を実行して有効化する(lefthook が無ければ `mise x lefthook@latest -- lefthook install`)。
+
 - テストは GitHub API を httpmock で差し替え、どのケースも `Options.repo` を明示するため、`GH_REPO` の指定も `gh` の認証も不要(未設定で通ることを確認済み)
 - README のテスト手順は `GH_REPO=swfz/gh-annotations go test -v` だが、現状のテストでは `GH_REPO` は無くても通る
 

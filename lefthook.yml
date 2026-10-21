@@ -1,0 +1,13 @@
+# コミット前に整形漏れ・静的検査・lint を確認する(lefthook install で有効化)
+pre-commit:
+  commands:
+    gofmt:
+      glob: "*.go"
+      # gofmt -l は差分があってもファイル名を出すだけで失敗しないため、出力の有無で判定する
+      run: test -z "$(gofmt -l {staged_files})" || (gofmt -l {staged_files}; exit 1)
+    go-vet:
+      glob: "*.go"
+      run: go vet ./...
+    golangci-lint:
+      glob: "*.go"
+      run: golangci-lint run ./...
