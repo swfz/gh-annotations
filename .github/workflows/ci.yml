@@ -34,9 +34,20 @@ jobs:
       - name: test
         shell: 'script -q -e -c "stty cols 200 rows 100; bash {0}"'
         run: |
-          go test -v
+          go test -v -coverprofile=coverage.out ./...
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: coverage threshold
+        env:
+          # lines(statements)の閾値(%)
+          COVERAGE_THRESHOLD: '70.0'
+        run: |
+          total=$(go tool cover -func=coverage.out | awk '/^total:/ {sub(/%/, "", $NF); print $NF}')
+          echo "coverage: ${total}% (threshold: ${COVERAGE_THRESHOLD}%)"
+          awk -v t="$total" -v th="$COVERAGE_THRESHOLD" 'BEGIN { exit !(t >= th) }' || {
+            echo "::error::coverage ${total}% is below ${COVERAGE_THRESHOLD}%"
+            exit 1
+          }
 
   lint:
     runs-on: ubuntu-latest
