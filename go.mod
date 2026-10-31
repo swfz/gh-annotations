@@ -3,7 +3,7 @@ module github.com/swfz/gh-annotations
 go 1.27.0
 
 require (
-	github.com/cli/cli/v2 v2.103.0
+	github.com/cli/cli/v2 v2.103.2
 	github.com/cli/go-gh/v2 v2.17.0
 	github.com/stretchr/testify v1.12.1
 )
