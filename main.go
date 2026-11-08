@@ -284,6 +284,17 @@ func run(options Options) {
 	}
 }
 
+// テストで差し替えるためのパッケージ変数
+var osExit = os.Exit
+
+// checkArgs は位置引数が渡されたとき、-repo での指定を促すメッセージと false を返す
+func checkArgs(arg string) (string, bool) {
+	if arg == "" {
+		return "", true
+	}
+	return fmt.Sprintf("Did you mean this?\n\tgh annotations -repo %s\n", arg), false
+}
+
 func main() {
 	var options Options
 
@@ -291,12 +302,10 @@ func main() {
 	flag.BoolVar(&options.json, "json", false, "Output JSON")
 	flag.Parse()
 
-	arg := flag.Arg(0)
-
-	if arg != "" {
-		fmt.Println("Did you mean this?")
-		fmt.Printf("\tgh annotations -repo %s\n", arg)
-		os.Exit(1)
+	if msg, ok := checkArgs(flag.Arg(0)); !ok {
+		fmt.Print(msg)
+		osExit(1)
+		return
 	}
 
 	run(options)

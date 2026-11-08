@@ -1,10 +1,12 @@
 package main
 
 import (
+	"flag"
 	"github.com/cli/cli/v2/pkg/httpmock"
 	"github.com/cli/cli/v2/pkg/iostreams"
 	"github.com/cli/go-gh/v2/pkg/api"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"strings"
 	"testing"
 )
@@ -238,6 +240,107 @@ func Test_run(t *testing.T) {
 
 			assert.Equal(t, tt.wantOut, stdout.String())
 			assert.Equal(t, tt.wantErrOut, stderr.String())
+		})
+	}
+}
+
+func Test_checkArgs(t *testing.T) {
+	t.Run("位置引数が無ければ続行する", func(t *testing.T) {
+		msg, ok := checkArgs("")
+		assert.True(t, ok)
+		assert.Equal(t, "", msg)
+	})
+
+	t.Run("位置引数があれば -repo での指定を促して止める", func(t *testing.T) {
+		msg, ok := checkArgs("swfz/gh-annotations")
+		assert.False(t, ok)
+		assert.Equal(t, "Did you mean this?\n\tgh annotations -repo swfz/gh-annotations\n", msg)
+	})
+}
+
+type exitCalled struct{ code int }
+
+func Test_main_positionalArg(t *testing.T) {
+	origArgs, origExit, origFlags := os.Args, osExit, flag.CommandLine
+	t.Cleanup(func() { os.Args, osExit, flag.CommandLine = origArgs, origExit, origFlags })
+	flag.CommandLine = flag.NewFlagSet("gh-annotations", flag.ContinueOnError)
+	os.Args = []string{"gh-annotations", "swfz/gh-annotations"}
+	osExit = func(code int) { panic(exitCalled{code: code}) }
+
+	defer func() {
+		r := recover()
+		assert.Equal(t, exitCalled{code: 1}, r)
+	}()
+	main()
+	t.Fatal("main should exit")
+}
+
+func newMockClient(t *testing.T, path string, responder httpmock.Responder) *api.RESTClient {
+	t.Helper()
+	reg := &httpmock.Registry{}
+	t.Cleanup(func() { reg.Verify(t) })
+	reg.Register(httpmock.REST("GET", path), responder)
+	client, err := api.NewRESTClient(api.ClientOptions{AuthToken: "dummy-token", Transport: reg})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return client
+}
+
+func Test_fetchErrors(t *testing.T) {
+	const repo = "swfz/gh-annotations"
+	runsPath := "repos/" + repo + "/actions/runs"
+	jobsPath := "repos/" + repo + "/actions/runs/1001/jobs"
+	annotationsPath := "repos/" + repo + "/check-runs/10001/annotations"
+
+	tests := []struct {
+		name      string
+		path      string
+		responder httpmock.Responder
+		fetch     func(client *api.RESTClient) error
+	}{
+		{
+			name:      "fetchWorkflowRuns: HTTP 500",
+			path:      runsPath,
+			responder: httpmock.StatusStringResponse(500, `{"message":"error"}`),
+			fetch:     func(c *api.RESTClient) error { _, err := fetchWorkflowRuns(c, repo); return err },
+		},
+		{
+			name:      "fetchWorkflowRuns: 型が合わない応答",
+			path:      runsPath,
+			responder: httpmock.StringResponse(`{"total_count":"many"}`),
+			fetch:     func(c *api.RESTClient) error { _, err := fetchWorkflowRuns(c, repo); return err },
+		},
+		{
+			name:      "fetchJobs: HTTP 500",
+			path:      jobsPath,
+			responder: httpmock.StatusStringResponse(500, `{"message":"error"}`),
+			fetch:     func(c *api.RESTClient) error { _, err := fetchJobs(c, repo, Run{Id: 1001}); return err },
+		},
+		{
+			name:      "fetchJobs: 型が合わない応答",
+			path:      jobsPath,
+			responder: httpmock.StringResponse(`{"total_count":"many"}`),
+			fetch:     func(c *api.RESTClient) error { _, err := fetchJobs(c, repo, Run{Id: 1001}); return err },
+		},
+		{
+			name:      "fetchAnnotations: HTTP 500",
+			path:      annotationsPath,
+			responder: httpmock.StatusStringResponse(500, `{"message":"error"}`),
+			fetch:     func(c *api.RESTClient) error { _, err := fetchAnnotations(c, repo, Job{Id: 10001}); return err },
+		},
+		{
+			name:      "fetchAnnotations: 型が合わない応答",
+			path:      annotationsPath,
+			responder: httpmock.StringResponse(`[{"start_line":"first"}]`),
+			fetch:     func(c *api.RESTClient) error { _, err := fetchAnnotations(c, repo, Job{Id: 10001}); return err },
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := newMockClient(t, tt.path, tt.responder)
+			assert.Error(t, tt.fetch(client))
 		})
 	}
 }
