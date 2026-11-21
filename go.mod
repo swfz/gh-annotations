@@ -3,13 +3,13 @@ module github.com/swfz/gh-annotations
 go 1.27.0
 
 require (
-	github.com/cli/cli/v2 v2.103.3
+	github.com/cli/cli/v2 v2.104.0
 	github.com/cli/go-gh/v2 v2.17.0
 	github.com/stretchr/testify v1.12.1
 )
 
 require (
-	charm.land/lipgloss/v2 v2.0.6 // indirect
+	charm.land/lipgloss/v2 v2.1.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/briandowns/spinner v1.23.2 // indirect
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
@@ -40,8 +40,8 @@ require (
 	github.com/thlib/go-timezone-local v0.0.9 // indirect
 	github.com/xo/terminfo v1.0.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
 	golang.org/x/term v0.47.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
