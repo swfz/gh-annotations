@@ -3,7 +3,7 @@ module github.com/swfz/gh-annotations
 go 1.27.0
 
 require (
-	github.com/cli/cli/v2 v2.104.0
+	github.com/cli/cli/v2 v2.105.0
 	github.com/cli/go-gh/v2 v2.17.0
 	github.com/stretchr/testify v1.12.1
 )
@@ -42,7 +42,7 @@ require (
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/sync v0.25.0 // indirect
 	golang.org/x/sys v0.50.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/term v0.48.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
